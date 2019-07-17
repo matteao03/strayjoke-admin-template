@@ -19,7 +19,7 @@ module.exports = {
       }
     }
   },
-  publicPath: process.env.NODE_ENV === 'production' ? '/vue' : '/',
+  publicPath: process.env.NODE_ENV === 'production' ? '/' : '/',
   lintOnSave: process.env.NODE_ENV !== 'production',
   chainWebpack: config => {
     config.module.rules.delete('svg') // 重点:删除默认配置中处理svg,
