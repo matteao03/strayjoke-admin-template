@@ -3,7 +3,7 @@
     v-if="renderOneLevel(cloneItem)"
     :index="`${basePath}/${cloneItem.path}`"
   >
-    <icon-svg v-if="cloneItem.icon" :icon-class="cloneItem.icon" />
+    <icon-svg v-if="cloneItem.menuIcon" :icon-class="cloneItem.menuIcon" />
     <icon-svg v-else icon-class="file" />
 
     <span slot="title" class="menu-title">{{ cloneItem.name }}</span>
@@ -11,7 +11,7 @@
   <el-submenu v-else-if="cloneItem.children && !cloneItem.hidden" :index="`${num}`">
     <template slot="title">
 
-      <icon-svg v-if="cloneItem.icon" :icon-class="cloneItem.icon" />
+      <icon-svg v-if="cloneItem.menuIcon" :icon-class="cloneItem.menuIcon" />
       <icon-svg v-else icon-class="menu" />
 
       <span slot="title" class="menu-title">{{ cloneItem.name }}</span>

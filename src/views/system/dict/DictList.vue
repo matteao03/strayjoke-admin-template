@@ -28,8 +28,7 @@
       <el-form-item label="字典状态" prop="status">
         <el-select v-model="searchForm.status" placeholder="部门状态">
           <el-option label="所有" value=""></el-option>
-          <el-option label="正常" value="0"></el-option>
-          <el-option label="停用" value="1"></el-option>
+          <el-option v-for="item in dictData" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -72,8 +71,14 @@
         </el-table-column>
         <el-table-column label="状态" prop="status" width="100">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.status == 1" type="info" size="small">{{ formatStatus(scope.row.status) }}</el-tag>
-            <el-tag v-else size="small" type="">{{ formatStatus(scope.row.status) }}</el-tag>
+            <template v-for="item in dictData">
+              <el-tag
+                v-if="scope.row.status === item.value"
+                :key="item.value"
+                size="small"
+                :type="item.listClass"
+              >{{ item.label }}</el-tag>
+            </template>
           </template>
         </el-table-column>
         <el-table-column
@@ -136,8 +141,7 @@
           <el-input v-model="editForm.type"></el-input>
         </el-form-item>
         <el-form-item label="状态" prop="status">
-          <el-radio v-model="editForm.status" label="0">正常</el-radio>
-          <el-radio v-model="editForm.status" label="1">停用</el-radio>
+          <el-radio v-for="item in dictData" :key="item.value" v-model="editForm.status" :label="item.value">{{ item.label }}</el-radio>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="editForm.remark"></el-input>
@@ -161,8 +165,7 @@
           <el-input v-model="addForm.type"></el-input>
         </el-form-item>
         <el-form-item label="状态" prop="status">
-          <el-radio v-model="addForm.status" label="0">正常</el-radio>
-          <el-radio v-model="addForm.status" label="1">停用</el-radio>
+          <el-radio v-for="item in dictData" :key="item.value" v-model="addForm.status" :label="item.value">{{ item.label }}</el-radio>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="addForm.remark"></el-input>
@@ -178,6 +181,7 @@
 
 <script>
 import { getDictList, editDict, addDict, deleteDict } from '@/api/dict.js'
+import { selectDictDataByType } from '@/api/dict.js'
 import { isRenderBtn } from '@/utils/common.js'
 import permissions from '@/permissions.js'
 
@@ -218,11 +222,13 @@ export default {
       currentPage: 1,
       pageSize: 10,
       pageSizes: [10, 50, 100, 200],
-      total: 0
+      total: 0,
+      dictData: []
     }
   },
   mounted() {
     this.getDictList()
+    this.selectDictDataByType('sys_show_hide')
     this.renderBtn()
   },
   methods: {
@@ -234,8 +240,10 @@ export default {
       this.showDeleteBtn = isRenderBtn(btnPerms, 'system:dict:delete', loginId)
       this.showEditBtn = isRenderBtn(btnPerms, 'system:dict:edit', loginId)
     },
-    formatStatus: function(value) {
-      return value === '0' ? '正常' : '停用'
+    selectDictDataByType(type) {
+      selectDictDataByType(type).then(res => {
+        this.dictData = res.data
+      })
     },
     showEditForm(data) {
       this.showEditDialog = true

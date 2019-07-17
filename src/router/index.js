@@ -8,8 +8,11 @@ import permissions from '@/permissions'
 Vue.use(Router)
 const router = new Router({
   mode: 'history',
+  base: '/vue/',
   routes: staticRoutes
 })
+
+// const copyStaticRoutes = deepCopy(staticRoutes)
 
 // 前置导航守卫
 router.beforeEach((to, from, next) => {
@@ -46,7 +49,25 @@ router.beforeEach((to, from, next) => {
     if (to.path === '/login') {
       next()
     } else {
+      // const whiteList = permissions.state.whiteList // 白名单
+      // if (!whiteList) {
+      //   store.dispatch('getWhiteList').then(res => {
+      //     const whiteList = res.pagePermissions
+      //     if (whiteList && whiteList.length > 0 && hasPermission(whiteList, to.path)) {
+      //       routeUtils(staticRoutes, res.menuPermissions)
+      //       permissions.SET_WHITE_LIST({ ...res, 'routes': staticRoutes })
+
+      //       router.addRoutes(staticRoutes) // 动态添加可访问路由表
+      //       next({ ...to, replace: true })
+      //     } else {
+      //       next(`/login`)
+      //     }
+      //   })
+      // } else if (whiteList.length > 0 && hasPermission(whiteList, to.path)) {
+      //   next()
+      // } else {
       next(`/login`)
+      // }
     }
   }
 })

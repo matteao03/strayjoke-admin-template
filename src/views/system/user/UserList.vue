@@ -17,8 +17,7 @@
         <el-form-item label="用户状态" prop="status">
           <el-select v-model="searchForm.status">
             <el-option label="所有" value=""></el-option>
-            <el-option label="正常" :value="0"></el-option>
-            <el-option label="停用" :value="1"></el-option>
+            <el-option v-for="item in dictData" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="创建时间" prop="start_at">
@@ -192,6 +191,7 @@
 import ZTree from '@/components/ZTree.vue'
 import UploadExcel from '@/components/UploadExcel.vue'
 import { getDeptList } from '@/api/dept.js'
+import { selectDictDataByType } from '@/api/dict.js'
 import { getUserList, deleteUser, resetPassword, changeUserOpen, deleteUsers } from '@/api/user.js'
 import { isRenderBtn } from '@/utils/common.js'
 import permissions from '@/permissions.js'
@@ -234,12 +234,14 @@ export default {
       currentPage: 1,
       pageSize: 10,
       pageSizes: [10, 50, 100, 200],
-      total: 0
+      total: 0,
+      dictData: []
     }
   },
   created() {
     this.getUserList()
     this.getDeptList()
+    this.selectDictDataByType('sys_show_hide')
     this.renderBtn()
   },
   methods: {
@@ -262,6 +264,11 @@ export default {
         this.tableData = res.data.list
         this.total = res.data.total
         this.$store.state.common.isLoading = 0
+      })
+    },
+    selectDictDataByType(type) {
+      selectDictDataByType(type).then(res => {
+        this.dictData = res.data
       })
     },
     changeEmpl(id) {

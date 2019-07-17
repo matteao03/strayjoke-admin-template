@@ -68,8 +68,7 @@
         </el-col>
         <el-col :span="11" :offset="1">
           <el-form-item label="用户性别">
-            <el-radio v-model="form.sex" :label="1">男</el-radio>
-            <el-radio v-model="form.sex" :label="2">女</el-radio>
+            <el-radio v-for="item in dictData" :key="item.value" v-model="form.sex" :label="item.value">{{ item.label }}</el-radio>
           </el-form-item>
         </el-col>
       </el-row>
@@ -130,6 +129,7 @@ import ZTree from '@/components/ZTree.vue'
 import { getRoleList } from '@/api/role.js'
 import { getDeptList } from '@/api/dept.js'
 import { getPostList } from '@/api/post.js'
+import { selectDictDataByType } from '@/api/dict.js'
 import { addUser } from '@/api/user.js'
 import bus from '@/utils/bus'
 
@@ -148,7 +148,7 @@ export default {
         deptName: '',
         phone: '',
         status: 0,
-        sex: 1,
+        sex: '0',
         email: '',
         role: [],
         remark: '',
@@ -165,13 +165,15 @@ export default {
         ],
         loginName: [{ required: true, message: '请输入登录账号', trigger: 'blur' }],
         role: [{ required: true, message: '请选择角色', trigger: 'change' }]
-      }
+      },
+      dictData: []
     }
   },
   created() {
     this.getRoleList()
     this.getDeptList()
     this.getPostList()
+    this.selectDictDataByType('sys_user_sex')
   },
   methods: {
     getRoleList() {
@@ -187,6 +189,11 @@ export default {
     getPostList() {
       getPostList({ 'status': '0' }).then(response => {
         this.postList = response.data
+      })
+    },
+    selectDictDataByType(type) {
+      selectDictDataByType(type).then(res => {
+        this.dictData = res.data
       })
     },
     onSubmit() {

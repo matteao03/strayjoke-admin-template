@@ -97,7 +97,6 @@ export default {
   computed: {
     avatar: () => {
       let result = ''
-      console.log(permissions.info.avatar)
       if (permissions.info.avatar) {
         result = `/api/${permissions.info.avatar}`
       } else {

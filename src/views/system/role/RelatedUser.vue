@@ -70,6 +70,7 @@
               inactive-color="#dddddd"
               active-value="0"
               inactive-value="1"
+              disabled
             >
             </el-switch>
           </template>
@@ -165,6 +166,7 @@
                   inactive-color="#dddddd"
                   active-value="0"
                   inactive-value="1"
+                  disabled
                 >
                 </el-switch>
               </template>
@@ -203,7 +205,7 @@ export default {
       },
       searchForm2: {
         name: '',
-        state: ''
+        phone: ''
       },
       showAddDialog: false,
       addRoleForm: {},

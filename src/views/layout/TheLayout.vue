@@ -1,7 +1,7 @@
 <template>
   <el-container class="layout">
     <the-aside />
-    <el-container direction="vertical">
+    <el-container direction="vertical" class="content">
       <the-header />
       <the-main />
     </el-container>
@@ -21,10 +21,14 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .layout{
   width:100%;
   height:100%;
+
+  .content{
+    overflow:hidden;
+  }
 }
 </style>
 

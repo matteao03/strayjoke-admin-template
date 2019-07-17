@@ -69,3 +69,18 @@ export function deleteDictDatas(ids) {
   })
 }
 
+export function selectDictDataByType(type) {
+  return request({
+    url: '/api/dictData',
+    method: 'get',
+    params: { type }
+  })
+}
+
+export function selectDictType() {
+  return request({
+    url: '/api/dictType',
+    method: 'get'
+  })
+}
+

@@ -68,8 +68,7 @@
         </el-col>
         <el-col :span="11" :offset="1">
           <el-form-item label="用户性别" prop="sex">
-            <el-radio v-model="form.sex" label="0">男</el-radio>
-            <el-radio v-model="form.sex" label="1">女</el-radio>
+            <el-radio v-for="item in dictData" :key="item.value" v-model="form.sex" :label="item.value">{{ item.label }}</el-radio>
           </el-form-item>
         </el-col>
       </el-row>
@@ -129,6 +128,7 @@ import ZTree from '@/components/ZTree.vue'
 import { getRoleList } from '@/api/role.js'
 import { getDeptList } from '@/api/dept.js'
 import { getPostList } from '@/api/post.js'
+import { selectDictDataByType } from '@/api/dict.js'
 import { getUserById, editUser } from '@/api/user.js'
 import bus from '@/utils/bus'
 
@@ -143,13 +143,15 @@ export default {
       roleList: [],
       deptList: [],
       postList: [],
-      selectedNode: {}
+      selectedNode: {},
+      dictData: []
     }
   },
   created() {
     this.getRoleList()
     this.getUserById(this.$route.params.id)
     this.getPostList()
+    this.selectDictDataByType('sys_user_sex')
   },
   methods: {
     getRoleList() {
@@ -173,6 +175,11 @@ export default {
         this.form = res.data
         this.posts = res.data.posts
         this.$store.state.common.isLoading = 0
+      })
+    },
+    selectDictDataByType(type) {
+      selectDictDataByType(type).then(res => {
+        this.dictData = res.data
       })
     },
     onSubmit() {

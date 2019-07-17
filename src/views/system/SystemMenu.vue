@@ -7,8 +7,7 @@
       <el-form-item label="可见状态" prop="visible">
         <el-select v-model="searchForm.visible">
           <el-option label="所有" value=""></el-option>
-          <el-option label="显示" :value="0"></el-option>
-          <el-option label="隐藏" :value="1"></el-option>
+          <el-option v-for="item in dictData" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -45,10 +44,14 @@
         >
           <template slot-scope="scope">
             {{ scope.row.name }}
-            <el-tag v-if="scope.row.type === 'C'" effect="dark" type="warning" size="small">{{ formatType(scope.row.type) }}</el-tag>
-            <el-tag v-else-if="scope.row.type === 'M'" effect="dark" type="success" size="small">{{ formatType(scope.row.type) }}</el-tag>
-            <el-tag v-else-if="scope.row.type ==='F'" effect="dark" size="small" type="danger">{{ formatType(scope.row.type) }}</el-tag>
-            <el-tag v-else effect="dark" size="small" type="">{{ formatType(scope.row.type) }}</el-tag>
+            <template v-for="item in dictMenuType">
+              <el-tag
+                v-if="scope.row.type === item.value"
+                :key="item.value"
+                size="small"
+                :type="item.listClass"
+              >{{ item.label }}</el-tag>
+            </template>
           </template>
         </el-table-column>
         <el-table-column
@@ -63,7 +66,15 @@
           width="250"
         >
           <template slot-scope="scope">
-            {{ scope.row.path }}<el-tag v-if="scope.row.type === 'I'" size="small">{{ formatMethod(scope.row.method) }}</el-tag>
+            {{ scope.row.path }}
+            <template v-for="item in dictHttpMothed">
+              <el-tag
+                v-if="scope.row.method === item.value"
+                :key="item.value"
+                size="small"
+                :type="item.listClass"
+              >{{ item.label }}</el-tag>
+            </template>
           </template>
         </el-table-column>
         <el-table-column
@@ -72,17 +83,16 @@
           width="250"
         >
         </el-table-column>
-        <!-- <el-table-column
-          prop="type"
-          label="类型"
-          width="100"
-        >
-
-        </el-table-column> -->
         <el-table-column label="可见" prop="visible" width="100">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.visible == 1" type="info" size="small">{{ formatVisible(scope.row.visible) }}</el-tag>
-            <el-tag v-else size="small">{{ formatVisible(scope.row.visible) }}</el-tag>
+            <template v-for="item in dictData">
+              <el-tag
+                v-if="scope.row.visible === item.value"
+                :key="item.value"
+                size="small"
+                :type="item.listClass"
+              >{{ item.label }}</el-tag>
+            </template>
           </template>
         </el-table-column>
         <el-table-column
@@ -137,10 +147,11 @@
           <el-input v-model="editForm.name"></el-input>
         </el-form-item>
         <el-form-item label="菜单类型" prop="type">
-          <el-radio v-model="editForm.type" label="M">目录</el-radio>
+          <el-radio v-for="item in dictMenuType" :key="item.value" v-model="editForm.type" :label="item.value">{{ item.label }}</el-radio>
+          <!-- <el-radio v-model="editForm.type" label="M">目录</el-radio>
           <el-radio v-model="editForm.type" label="C">菜单</el-radio>
           <el-radio v-model="editForm.type" label="F">按钮</el-radio>
-          <el-radio v-model="editForm.type" label="I">接口</el-radio>
+          <el-radio v-model="editForm.type" label="I">接口</el-radio> -->
         </el-form-item>
         <el-form-item label="显示排序">
           <el-input v-model="editForm.orderNum"></el-input>
@@ -148,7 +159,7 @@
         <el-form-item v-if="editForm.type === 'I'" label="http 方法" prop="method">
           <el-select v-model="editForm.method" placeholder="请选择">
             <el-option
-              v-for="item in httpMethodOptions"
+              v-for="item in dictHttpMothed"
               :key="item.value"
               :label="item.label"
               :value="item.value"
@@ -167,8 +178,7 @@
           <icons v-if="showIcon" @selected="selectIcon(editForm,arguments)"></icons>
         </el-form-item>
         <el-form-item v-show="editForm.type === 'C'" label="菜单状态" prop="visible">
-          <el-radio v-model="editForm.visible" label="0">显示</el-radio>
-          <el-radio v-model="editForm.visible" label="1">隐藏</el-radio>
+          <el-radio v-for="item in dictData" :key="item.value" v-model="editForm.status" :label="item.value">{{ item.label }}</el-radio>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -193,10 +203,11 @@
           <el-input v-model="addForm.name"></el-input>
         </el-form-item>
         <el-form-item label="菜单类型" prop="type">
-          <el-radio v-model="addForm.type" label="M">目录</el-radio>
+          <el-radio v-for="item in dictMenuType" :key="item.value" v-model="addForm.type" :label="item.value">{{ item.label }}</el-radio>
+          <!-- <el-radio v-model="addForm.type" label="M">目录</el-radio>
           <el-radio v-model="addForm.type" label="C">菜单</el-radio>
           <el-radio v-model="addForm.type" label="F">按钮</el-radio>
-          <el-radio v-model="addForm.type" label="I">接口</el-radio>
+          <el-radio v-model="addForm.type" label="I">接口</el-radio> -->
         </el-form-item>
         <el-form-item label="显示排序" prop="orderNum">
           <el-input v-model="addForm.orderNum"></el-input>
@@ -204,7 +215,7 @@
         <el-form-item v-if="addForm.type === 'I'" label="http 方法" prop="method">
           <el-select v-model="addForm.method" placeholder="请选择">
             <el-option
-              v-for="item in httpMethodOptions"
+              v-for="item in dictHttpMothed"
               :key="item.value"
               :label="item.label"
               :value="item.value"
@@ -223,8 +234,7 @@
           <icons v-if="showIcon" @selected="selectIcon(addForm,arguments)"></icons>
         </el-form-item>
         <el-form-item v-show="addForm.type === 'C'" label="菜单状态" prop="visible">
-          <el-radio v-model="addForm.visible" :label="0">显示</el-radio>
-          <el-radio v-model="addForm.visible" :label="1">隐藏</el-radio>
+          <el-radio v-for="item in dictData" :key="item.value" v-model="addForm.status" :label="item.value">{{ item.label }}</el-radio>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -258,6 +268,7 @@
 
 <script>
 import { getMenuList, editMenu, addMenu, deleteMenu, changeMenuOpen } from '@/api/menu.js'
+import { selectDictDataByType } from '@/api/dict.js'
 import { recursiveObj } from '@/utils/common.js'
 import ZTree from '@/components/ZTree.vue'
 import Icons from '@/components/menu-icons'
@@ -290,7 +301,7 @@ export default {
         icon: '',
         type: 0,
         visible: 0,
-        method: '1'
+        method: ''
       },
       addForm: {
         name: '',
@@ -300,7 +311,7 @@ export default {
         icon: '',
         type: 'C',
         visible: 0,
-        method: '1'
+        method: ''
       },
       searchForm: {
         name: '',
@@ -320,7 +331,11 @@ export default {
         { value: '1', label: 'get' },
         { value: '2', label: 'post' },
         { value: '3', label: 'put' },
-        { value: '4', label: 'delete' }]
+        { value: '4', label: 'delete' }
+      ],
+      dictData: [],
+      dictMenuType: [],
+      dictHttpMothed: []
     }
   },
   watch: {
@@ -339,6 +354,9 @@ export default {
   },
   mounted() {
     this.getMenuList()
+    this.selectDictDataByType('sys_show_hide')
+    this.selectDictMenuType('sys_menu_type')
+    this.selectDictHttpMethod('sys_http_method')
     this.renderBtn()
   },
   methods: {
@@ -350,48 +368,60 @@ export default {
       this.showDeleteBtn = isRenderBtn(btnPerms, 'system:menu:delete', loginId)
       this.showEditBtn = isRenderBtn(btnPerms, 'system:menu:edit', loginId)
     },
-    formatType: function(value) {
-      let type = ''
-      switch (value) {
-        case 'M':
-          type = '目录'
-          break
-        case 'F':
-          type = '按钮'
-          break
-        case 'C':
-          type = '菜单'
-          break
-        case 'I':
-          type = '接口'
-          break
-        default:
-          break
-      }
-      return type
+    // formatType: function(value) {
+    //   let type = ''
+    //   switch (value) {
+    //     case 'M':
+    //       type = '目录'
+    //       break
+    //     case 'F':
+    //       type = '按钮'
+    //       break
+    //     case 'C':
+    //       type = '菜单'
+    //       break
+    //     case 'I':
+    //       type = '接口'
+    //       break
+    //     default:
+    //       break
+    //   }
+    //   return type
+    // },
+    // formatMethod: function(value) {
+    //   let method = ''
+    //   switch (value) {
+    //     case '1':
+    //       method = 'GET'
+    //       break
+    //     case '2':
+    //       method = 'POST'
+    //       break
+    //     case '3':
+    //       method = 'PUT'
+    //       break
+    //     case '4':
+    //       method = 'DELETE'
+    //       break
+    //     default:
+    //       break
+    //   }
+    //   return method
+    // },
+    selectDictDataByType(type) {
+      selectDictDataByType(type).then(res => {
+        this.dictData = res.data
+      })
     },
-    formatMethod: function(value) {
-      let method = ''
-      switch (value) {
-        case '1':
-          method = 'GET'
-          break
-        case '2':
-          method = 'POST'
-          break
-        case '3':
-          method = 'PUT'
-          break
-        case '4':
-          method = 'DELETE'
-          break
-        default:
-          break
-      }
-      return method
+    selectDictMenuType(type) {
+      selectDictDataByType(type).then(res => {
+        this.dictMenuType = res.data
+      })
     },
-    formatVisible: function(value) {
-      return value === '0' ? '显示' : '隐藏'
+    selectDictHttpMethod(type) {
+      selectDictDataByType(type).then(res => {
+        this.dictHttpMothed = res.data
+      })
     },
     getMenuNode() {
       const menu = this.$refs.menuTree.getNode()

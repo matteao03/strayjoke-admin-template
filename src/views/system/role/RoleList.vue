@@ -7,8 +7,7 @@
       <el-form-item label="角色状态" prop="state">
         <el-select v-model="searchForm.status" placeholder="角色状态">
           <el-option label="所有" value=""></el-option>
-          <el-option label="正常" :value="0"></el-option>
-          <el-option label="停用" :value="1"></el-option>
+          <el-option v-for="item in dictData" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -134,8 +133,7 @@
             <el-input v-model="addForm.roleSort"></el-input>
           </el-form-item>
           <el-form-item label="状态" prop="status">
-            <el-radio v-model="addForm.status" :label="0">显示</el-radio>
-            <el-radio v-model="addForm.status" :label="1">隐藏</el-radio>
+            <el-radio v-for="item in dictData" :key="item.value" v-model="addForm.status" :label="item.value">{{ item.label }}</el-radio>
           </el-form-item>
           <el-form-item label="备注" prop="remark">
             <el-input v-model="addForm.remark"></el-input>
@@ -166,8 +164,7 @@
             <el-input v-model="editForm.roleSort"></el-input>
           </el-form-item>
           <el-form-item label="状态" prop="status">
-            <el-radio v-model="editForm.status" label="0">显示</el-radio>
-            <el-radio v-model="editForm.status" label="1">隐藏</el-radio>
+            <el-radio v-for="item in dictData" :key="item.value" v-model="editForm.status" :label="item.value">{{ item.label }}</el-radio>
           </el-form-item>
           <el-form-item label="备注" prop="remark">
             <el-input v-model="editForm.remark"></el-input>
@@ -185,6 +182,7 @@
       <el-dialog
         title="分配数据权限"
         :visible.sync="showPermissionDialog"
+        center
       >
         <el-form ref="permissionForm" :model="permissionForm" label-width="80px">
           <el-form-item label="角色名称">
@@ -220,6 +218,7 @@
 <script>
 import ZTree from '@/components/ZTree.vue'
 import { getRoleList, editRole, addRole, deleteRole, deleteRoles, relateDataPermission } from '@/api/role.js'
+import { selectDictDataByType } from '@/api/dict.js'
 import { getCheckedMenuList, getMenuList } from '@/api/menu.js'
 import { getCheckedDeptList } from '@/api/dept.js'
 import { isRenderBtn } from '@/utils/common.js'
@@ -259,14 +258,14 @@ export default {
         name: '',
         roleKey: '',
         roleSort: 0,
-        status: 0,
+        status: '0',
         remark: ''
       },
       editForm: {
         name: '',
         roleKey: '',
         roleSort: 0,
-        status: 0,
+        status: '0',
         remark: ''
       },
       tableData: [],
@@ -284,11 +283,14 @@ export default {
       },
       dataScopeOptions: [
         { value: '1', label: '全部数据权限' },
-        { value: '2', label: '自定义数据权限' }]
+        { value: '2', label: '自定义数据权限' }
+      ],
+      dictData: []
     }
   },
   mounted() {
     this.getRoleList()
+    this.selectDictDataByType('sys_show_hide')
     this.renderBtn()
   },
   methods: {
@@ -314,6 +316,11 @@ export default {
       const para = Object.assign({})
       getMenuList(para).then(res => {
         this.treeData = res.data
+      })
+    },
+    selectDictDataByType(type) {
+      selectDictDataByType(type).then(res => {
+        this.dictData = res.data
       })
     },
     checkNodeIds(nodeIds) {

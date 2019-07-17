@@ -2,11 +2,13 @@ import axios from 'axios'
 import store from '@/store'
 import router from '@/router'
 import { Message, MessageBox } from 'element-ui'
+import { spliceErrorHtml } from '@/utils/common'
 
 // create an axios instance
 const service = axios.create({
   // baseURL: process.env.BASE_API,
-  baseURL: 'http://localhost:3000/', // api 的 base_url
+  // baseURL: 'http://localhost:3000/', // api 的 base_url
+  baseURL: '/', // api 的 base_url
   timeout: 5000 // request timeout
 })
 
@@ -59,6 +61,17 @@ service.interceptors.response.use(
             closeOnClickModal: false,
             closeOnPressEscape: false,
             type: 'warning' }
+          )
+          break
+        case 422:
+          MessageBox.confirm(spliceErrorHtml(error.response.data.errors), '错误', {
+            confirmButtonText: '确认',
+            showCancelButton: false,
+            showClose: false,
+            closeOnClickModal: false,
+            closeOnPressEscape: false,
+            dangerouslyUseHTMLString: true,
+            type: 'error' }
           )
           break
         default:

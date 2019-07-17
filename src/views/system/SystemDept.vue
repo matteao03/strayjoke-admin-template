@@ -7,8 +7,7 @@
       <el-form-item label="部门状态" prop="status">
         <el-select v-model="searchForm.status" placeholder="部门状态">
           <el-option label="所有" value=""></el-option>
-          <el-option label="正常" value="0"></el-option>
-          <el-option label="停用" value="1"></el-option>
+          <el-option v-for="item in dictData" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -52,8 +51,14 @@
         </el-table-column>
         <el-table-column label="状态" prop="status" width="100">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.status === 1" type="info" size="small">{{ formatStatus(scope.row.status) }}</el-tag>
-            <el-tag v-else size="small">{{ formatStatus(scope.row.status) }}</el-tag>
+            <template v-for="item in dictData">
+              <el-tag
+                v-if="scope.row.status === item.value"
+                :key="item.value"
+                size="small"
+                :type="item.listClass"
+              >{{ item.label }}</el-tag>
+            </template>
           </template>
         </el-table-column>
         <el-table-column
@@ -108,8 +113,7 @@
           <el-input v-model="editForm.email"></el-input>
         </el-form-item>
         <el-form-item label="部门状态" prop="status">
-          <el-radio v-model="editForm.status" label="0">正常</el-radio>
-          <el-radio v-model="editForm.status" label="1">停用</el-radio>
+          <el-radio v-for="item in dictData" :key="item.value" v-model="editForm.status" :label="item.value">{{ item.label }}</el-radio>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -145,8 +149,7 @@
           <el-input v-model="addForm.email"></el-input>
         </el-form-item>
         <el-form-item label="部门状态" prop="status">
-          <el-radio v-model="addForm.status" label="0">正常</el-radio>
-          <el-radio v-model="addForm.status" label="1">停用</el-radio>
+          <el-radio v-for="item in dictData" :key="item.value" v-model="addForm.status" :label="item.value">{{ item.label }}</el-radio>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -180,6 +183,7 @@
 
 <script>
 import { getDeptList, editDept, addDept, deleteDept } from '@/api/dept.js'
+import { selectDictDataByType } from '@/api/dict.js'
 import { recursiveObj } from '@/utils/common.js'
 import ZTree from '@/components/ZTree.vue'
 import permissions from '@/permissions.js'
@@ -227,7 +231,8 @@ export default {
       multipleSelection: [],
       rules: {
         name: [{ required: true, message: '请输入部门名称', trigger: 'blur' }]
-      }
+      },
+      dictData: []
     }
   },
   watch: {
@@ -246,6 +251,7 @@ export default {
   },
   mounted() {
     this.getDeptList()
+    this.selectDictDataByType('sys_show_hide')
     this.renderBtn()
   },
   methods: {
@@ -257,10 +263,8 @@ export default {
       this.showDeleteBtn = isRenderBtn(btnPerms, 'system:dept:delete', loginId)
       this.showEditBtn = isRenderBtn(btnPerms, 'system:dept:edit', loginId)
     },
-    formatStatus: function(value) {
-      return value === '0' ? '正常' : '停用'
-    },
     handleCommand(command) {
+      console.log(222)
       const type = command.type
       const data = command.data
       switch (type) {
@@ -317,6 +321,11 @@ export default {
       this.pid = dept.id
       this.parentName = dept.name
       this.dialogVisible = false
+    },
+    selectDictDataByType(type) {
+      selectDictDataByType(type).then(res => {
+        this.dictData = res.data
+      })
     },
     getDeptList() {
       this.$store.state.common.isLoading = 1

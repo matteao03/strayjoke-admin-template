@@ -10,8 +10,7 @@
       <el-form-item label="岗位状态" prop="status">
         <el-select v-model="searchForm.status" placeholder="岗位状态">
           <el-option label="所有" value=""></el-option>
-          <el-option label="正常" value="0"></el-option>
-          <el-option label="停用" value="1"></el-option>
+          <el-option v-for="item in dictData" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -24,7 +23,7 @@
         <el-button v-if="showAddBtn" type="primary" icon="el-icon-plus" size="medium" @click="showAddDialog = !showAddDialog">新增</el-button>
         <el-button v-if="showEditBtn" type="success" icon="el-icon-edit-outline" size="medium" :disabled="editDisabled" @click="editSelect">修改</el-button>
         <!-- <el-button v-if="showDeleteBtn" type="info" icon="el-icon-delete" size="medium" :disabled="deleteDisabled" @click="deleteSelect">删除</el-button> -->
-        <el-button type="danger" icon="el-icon-download" size="medium" :loading="downloadLoading" @click="handleDownload">导出</el-button>
+        <!-- <el-button type="danger" icon="el-icon-download" size="medium" :loading="downloadLoading" @click="handleDownload">导出</el-button> -->
         <el-button circle type="success" icon="el-icon-menu" size="medium" style="float:right;" @click="showSearchForm = !showSearchForm"></el-button>
       </div>
       <el-table
@@ -68,8 +67,14 @@
         </el-table-column>
         <el-table-column label="状态" prop="status" width="100">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.status === 1" type="info" size="small">{{ formatStatus(scope.row.status) }}</el-tag>
-            <el-tag v-else size="small">{{ formatStatus(scope.row.status) }}</el-tag>
+            <template v-for="item in dictData">
+              <el-tag
+                v-if="scope.row.status === item.value"
+                :key="item.value"
+                size="small"
+                :type="item.listClass"
+              >{{ item.label }}</el-tag>
+            </template>
           </template>
         </el-table-column>
         <el-table-column
@@ -113,8 +118,7 @@
           <el-input v-model="editForm.sort"></el-input>
         </el-form-item>
         <el-form-item label="岗位状态" prop="status">
-          <el-radio v-model="editForm.status" label="0">正常</el-radio>
-          <el-radio v-model="editForm.status" label="1">停用</el-radio>
+          <el-radio v-for="item in dictData" :key="item.value" v-model="editForm.status" :label="item.value">{{ item.label }}</el-radio>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="editForm.remark"></el-input>
@@ -141,8 +145,7 @@
           <el-input v-model="addForm.sort"></el-input>
         </el-form-item>
         <el-form-item label="岗位状态" prop="status">
-          <el-radio v-model="addForm.status" label="0">正常</el-radio>
-          <el-radio v-model="addForm.status" label="1">停用</el-radio>
+          <el-radio v-for="item in dictData" :key="item.value" v-model="addForm.status" :label="item.value">{{ item.label }}</el-radio>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="addForm.remark"></el-input>
@@ -158,6 +161,7 @@
 
 <script>
 import { getPostList, editPost, addPost, deletePost, deletePosts } from '@/api/post.js'
+import { selectDictDataByType } from '@/api/dict.js'
 import permissions from '@/permissions.js'
 import { isRenderBtn } from '@/utils/common.js'
 
@@ -198,11 +202,13 @@ export default {
         name: [{ required: true, message: '请输入岗位名称', trigger: 'blur' }],
         code: [{ required: true, message: '请输入岗位编码', trigger: 'blur' }],
         sort: [{ required: true, message: '请输入显示顺序', trigger: 'blur' }]
-      }
+      },
+      dictData: []
     }
   },
   mounted() {
     this.getPostList()
+    this.selectDictDataByType('sys_show_hide')
     this.renderBtn()
   },
   methods: {
@@ -213,9 +219,6 @@ export default {
       this.showAddBtn = isRenderBtn(btnPerms, 'system:dept:add', loginId)
       this.showDeleteBtn = isRenderBtn(btnPerms, 'system:dept:delete', loginId)
       this.showEditBtn = isRenderBtn(btnPerms, 'system:dept:edit', loginId)
-    },
-    formatStatus: function(value) {
-      return value === '0' ? '正常' : '停用'
     },
     showEditForm(data) {
       this.showEditDialog = true
@@ -232,6 +235,11 @@ export default {
       getPostList(para).then(res => {
         this.tableData = res.data
         this.$store.state.common.isLoading = 0
+      })
+    },
+    selectDictDataByType(type) {
+      selectDictDataByType(type).then(res => {
+        this.dictData = res.data
       })
     },
     editPost() {
