@@ -2,7 +2,7 @@
   <el-container class="layout">
     <the-aside />
     <el-container direction="vertical" class="content">
-      <the-header />
+      <the-header /> 
       <the-main />
     </el-container>
   </el-container>

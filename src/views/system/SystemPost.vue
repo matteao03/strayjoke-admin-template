@@ -162,7 +162,6 @@
 <script>
 import { getPostList, editPost, addPost, deletePost, deletePosts } from '@/api/post.js'
 import { selectDictDataByType } from '@/api/dict.js'
-import permissions from '@/permissions.js'
 import { isRenderBtn } from '@/utils/common.js'
 
 export default {
@@ -213,8 +212,8 @@ export default {
   },
   methods: {
     renderBtn() {
-      const btnPerms = permissions.state.btnPermissions
-      const loginId = permissions.info.id
+      const btnPerms = this.$store.state.btnPermissions
+      const loginId = this.$store.state.id
       this.showListBtn = isRenderBtn(btnPerms, 'system:dept:search', loginId)
       this.showAddBtn = isRenderBtn(btnPerms, 'system:dept:add', loginId)
       this.showDeleteBtn = isRenderBtn(btnPerms, 'system:dept:delete', loginId)

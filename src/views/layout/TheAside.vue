@@ -21,27 +21,26 @@
 <script>
 import { mapState } from 'vuex'
 import MenuItem from '@/components/MenuItem'
-import permissions from '@/permissions'
 import '@/components/menu-icons/requireIcons.js'
 
 export default {
   components: {
-    'menu-item': MenuItem
+   'menu-item': MenuItem 
   },
   computed: {
     ...mapState({
       asideWidth: state => (state.common.isCollapseNav === 1 ? '60px' : '200px'),
-      isCollapse: state => state.common.isCollapseNav === 1
+      isCollapse: state => state.common.isCollapseNav === 1,
+      sideBar: state => {
+        let sideBar = []
+        state.permissions.routes.forEach(item => {
+          if (item.path === '/') {
+            sideBar = item.children
+          }
+        })
+        return sideBar
+      }
     }),
-    sideBar: () => {
-      let sideBar = []
-      permissions.state.routes.forEach(item => {
-        if (item.path === '/') {
-          sideBar = item.children
-        }
-      })
-      return sideBar
-    }
   }
 }
 </script>

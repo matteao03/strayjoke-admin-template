@@ -186,7 +186,6 @@ import { getDeptList, editDept, addDept, deleteDept } from '@/api/dept.js'
 import { selectDictDataByType } from '@/api/dict.js'
 import { recursiveObj } from '@/utils/common.js'
 import ZTree from '@/components/ZTree.vue'
-import permissions from '@/permissions.js'
 import { isRenderBtn } from '@/utils/common.js'
 
 export default {
@@ -256,15 +255,14 @@ export default {
   },
   methods: {
     renderBtn() {
-      const btnPerms = permissions.state.btnPermissions
-      const loginId = permissions.info.id
+      const btnPerms = this.$store.state.btnPermissions
+      const loginId = this.$store.state.id
       this.showListBtn = isRenderBtn(btnPerms, 'system:dept:search', loginId)
       this.showAddBtn = isRenderBtn(btnPerms, 'system:dept:add', loginId)
       this.showDeleteBtn = isRenderBtn(btnPerms, 'system:dept:delete', loginId)
       this.showEditBtn = isRenderBtn(btnPerms, 'system:dept:edit', loginId)
     },
     handleCommand(command) {
-      console.log(222)
       const type = command.type
       const data = command.data
       switch (type) {

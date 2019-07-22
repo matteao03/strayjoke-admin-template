@@ -1,4 +1,4 @@
-import request from './request.js'
+import request from '@/utils/request.js'
 
 export function login(data) {
   return request({
@@ -18,13 +18,6 @@ export function getUserInfo() {
 export function getPermissions() {
   return request({
     url: '/api/auth/permissions',
-    method: 'get'
-  })
-}
-
-export function getWhiteList() {
-  return request({
-    url: '/api/auth/whiteList',
     method: 'get'
   })
 }

@@ -7,7 +7,11 @@
       <el-form-item label="可见状态" prop="visible">
         <el-select v-model="searchForm.visible">
           <el-option label="所有" value=""></el-option>
-          <el-option v-for="item in dictData" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          <el-option v-for="item in dictData" 
+            :key="item.value" 
+            :label="item.label" 
+            :value="item.value">
+          </el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -17,7 +21,7 @@
     </el-form>
     <div class="table-container">
       <div class="btn-dom">
-        <el-button v-if="showAddBtn" type="primary" icon="el-icon-plus" size="medium" @click="showAddMenuForm">新增</el-button>
+        <el-button v-if="showAddBtn" type="primary" icon="el-icon-plus" size="medium" @click="showAddForm">新增</el-button>
         <el-button v-if="showEditBtn" type="success" icon="el-icon-edit-outline" size="medium" :disabled="editDisabled" @click="editSelect">修改</el-button>
         <el-button type="info" icon="el-icon-sort" size="medium" @click="collapseTable">展开/折叠</el-button>
         <el-button circle type="success" icon="el-icon-menu" size="medium" style="float:right;" @click="showSearchForm = !showSearchForm"></el-button>
@@ -95,24 +99,6 @@
             </template>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="open"
-          label="公开"
-          width="130"
-        >
-          <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.open"
-              style="display: block"
-              active-color="#409eff"
-              inactive-color="#dddddd"
-              active-value="1"
-              inactive-value="0"
-              @change="changeMenuOpen($event, scope.row.id)"
-            >
-            </el-switch>
-          </template>
-        </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-dropdown trigger="click" placement="bottom-start" @command="handleCommand">
@@ -133,7 +119,7 @@
 
     <el-dialog
       title="编辑菜单"
-      :visible.sync="showEditMenuDialog"
+      :visible.sync="showEditDialog"
       center
     >
       <el-form ref="editForm" :model="editForm" label-width="80px" :rules="rules">
@@ -147,11 +133,13 @@
           <el-input v-model="editForm.name"></el-input>
         </el-form-item>
         <el-form-item label="菜单类型" prop="type">
-          <el-radio v-for="item in dictMenuType" :key="item.value" v-model="editForm.type" :label="item.value">{{ item.label }}</el-radio>
-          <!-- <el-radio v-model="editForm.type" label="M">目录</el-radio>
-          <el-radio v-model="editForm.type" label="C">菜单</el-radio>
-          <el-radio v-model="editForm.type" label="F">按钮</el-radio>
-          <el-radio v-model="editForm.type" label="I">接口</el-radio> -->
+          <el-radio v-for="item in dictMenuType" 
+            :key="item.value"
+            v-model="editForm.type" 
+            :label="item.value"
+          >
+            {{ item.label }}
+          </el-radio>
         </el-form-item>
         <el-form-item label="显示排序">
           <el-input v-model="editForm.orderNum"></el-input>
@@ -189,7 +177,7 @@
 
     <el-dialog
       title="添加菜单"
-      :visible.sync="showAddMenuDialog"
+      :visible.sync="showAddDialog"
       center
     >
       <el-form ref="addForm" :model="addForm" label-width="80px" :rules="rules">
@@ -204,10 +192,6 @@
         </el-form-item>
         <el-form-item label="菜单类型" prop="type">
           <el-radio v-for="item in dictMenuType" :key="item.value" v-model="addForm.type" :label="item.value">{{ item.label }}</el-radio>
-          <!-- <el-radio v-model="addForm.type" label="M">目录</el-radio>
-          <el-radio v-model="addForm.type" label="C">菜单</el-radio>
-          <el-radio v-model="addForm.type" label="F">按钮</el-radio>
-          <el-radio v-model="addForm.type" label="I">接口</el-radio> -->
         </el-form-item>
         <el-form-item label="显示排序" prop="orderNum">
           <el-input v-model="addForm.orderNum"></el-input>
@@ -272,7 +256,6 @@ import { selectDictDataByType } from '@/api/dict.js'
 import { recursiveObj } from '@/utils/common.js'
 import ZTree from '@/components/ZTree.vue'
 import Icons from '@/components/menu-icons'
-import permissions from '@/permissions.js'
 import { isRenderBtn } from '@/utils/common.js'
 
 export default {
@@ -288,8 +271,8 @@ export default {
       showEditBtn: false,
       showDeleteBtn: false,
       editDisabled: true,
-      showEditMenuDialog: false,
-      showAddMenuDialog: false,
+      showEditDialog: false,
+      showAddDialog: false,
       dialogVisible: false,
       defaultExpandAll: false,
       showIcon: false,
@@ -323,16 +306,7 @@ export default {
       multipleSelection: [],
       rules: {
         name: [{ required: true, message: '请输入菜单名称', trigger: 'blur' }]
-        // path: [{ required: true, message: '请输入请求地址', trigger: 'blur' }],
-        // perms: [{ required: true, message: '请输入权限标识', trigger: 'blur' }],
-        // method: [{ required: true, message: '请选择http方法', trigger: 'blur' }]
       },
-      httpMethodOptions: [
-        { value: '1', label: 'get' },
-        { value: '2', label: 'post' },
-        { value: '3', label: 'put' },
-        { value: '4', label: 'delete' }
-      ],
       dictData: [],
       dictMenuType: [],
       dictHttpMothed: []
@@ -361,53 +335,13 @@ export default {
   },
   methods: {
     renderBtn() {
-      const btnPerms = permissions.state.btnPermissions
-      const loginId = permissions.info.id
+      const btnPerms = this.$store.state.btnPermissions
+      const loginId = this.$store.state.id
       this.showListBtn = isRenderBtn(btnPerms, 'system:menu:search', loginId)
       this.showAddBtn = isRenderBtn(btnPerms, 'system:menu:add', loginId)
       this.showDeleteBtn = isRenderBtn(btnPerms, 'system:menu:delete', loginId)
       this.showEditBtn = isRenderBtn(btnPerms, 'system:menu:edit', loginId)
     },
-    // formatType: function(value) {
-    //   let type = ''
-    //   switch (value) {
-    //     case 'M':
-    //       type = '目录'
-    //       break
-    //     case 'F':
-    //       type = '按钮'
-    //       break
-    //     case 'C':
-    //       type = '菜单'
-    //       break
-    //     case 'I':
-    //       type = '接口'
-    //       break
-    //     default:
-    //       break
-    //   }
-    //   return type
-    // },
-    // formatMethod: function(value) {
-    //   let method = ''
-    //   switch (value) {
-    //     case '1':
-    //       method = 'GET'
-    //       break
-    //     case '2':
-    //       method = 'POST'
-    //       break
-    //     case '3':
-    //       method = 'PUT'
-    //       break
-    //     case '4':
-    //       method = 'DELETE'
-    //       break
-    //     default:
-    //       break
-    //   }
-    //   return method
-    // },
     selectDictDataByType(type) {
       selectDictDataByType(type).then(res => {
         this.dictData = res.data
@@ -433,12 +367,12 @@ export default {
       this.dialogVisible = true
     },
     showAddMenuForm() {
-      this.showAddMenuDialog = true
+      this.showAddDialog = true
       this.pid = 0
       this.parentName = '无'
     },
     showEditMenuForm(data) {
-      this.showEditMenuDialog = true
+      this.showEditDialog = true
       this.editForm.id = data.id
       this.editForm.name = data.name
       this.editForm.orderNum = data.orderNum
@@ -457,12 +391,12 @@ export default {
       const data = command.data
       switch (type) {
         case 'add':
-          this.showAddMenuDialog = true
+          this.showAddDialog = true
           this.pid = data.id
           this.parentName = data.name
           break
         case 'edit':
-          this.showEditMenuForm(data)
+          this.showEditForm(data)
           break
         case 'delete':
           this.$confirm('确定删除该条菜单信息吗?', '系统提示', {
@@ -471,7 +405,7 @@ export default {
             type: 'warning'
           }).then(() => {
             this.$store.state.common.isLoading = 1
-            deleteMenu(data.id).then((res) => {
+            deleteMenu(data.id).then(() => {
               this.getMenuList() // 刷新数据
               this.$message({
                 type: 'success',
@@ -499,7 +433,7 @@ export default {
           this.$confirm('确认提交吗？', '提示', {}).then(() => {
             this.$store.state.common.isLoading = 1
             const para = Object.assign({ pid: this.pid }, this.editForm)
-            editMenu(para).then((res) => {
+            editMenu(para).then(() => {
               this.getMenuList()
               this.$message({
                 message: '菜单信息修改成功',
@@ -517,7 +451,7 @@ export default {
         if (valid) {
           this.$confirm('确认提交吗？', '提示', {}).then(() => {
             const para = Object.assign({ pid: this.pid }, this.addForm)
-            addMenu(para).then((res) => {
+            addMenu(para).then(() => {
               this.getMenuList()
               this.$message({
                 message: '菜单添加成功',
@@ -573,7 +507,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        changeMenuOpen({ id, open: val }).then(res => {
+        changeMenuOpen({ id, open: val }).then(() => {
           this.$message({
             message: '操作成功',
             type: 'success'

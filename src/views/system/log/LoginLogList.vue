@@ -111,7 +111,6 @@
 import { getLoginLogList, deleteLoginLogs, emptyLoginLogs } from '@/api/log.js'
 import { selectDictDataByType } from '@/api/dict.js'
 import { isRenderBtn } from '@/utils/common.js'
-import permissions from '@/permissions.js'
 
 export default {
   data() {
@@ -140,8 +139,8 @@ export default {
   },
   methods: {
     renderBtn() {
-      const btnPerms = permissions.state.btnPermissions
-      const loginId = permissions.info.id
+      const btnPerms = this.$store.state.btnPermissions
+      const loginId = this.$store.state.id
       this.showListBtn = isRenderBtn(btnPerms, 'system:loginLog:search', loginId)
       this.showDeleteBtn = isRenderBtn(btnPerms, 'system:loginLog:delete', loginId)
     },

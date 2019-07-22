@@ -25,7 +25,6 @@
 <script>
 import Fuse from 'fuse.js'
 import path from 'path'
-import permissions from '@/permissions'
 
 export default {
   data() {
@@ -39,7 +38,7 @@ export default {
   },
   computed: {
     routes() {
-      return permissions.state.routes
+      return this.$store.state.routes
     }
   },
   watch: {

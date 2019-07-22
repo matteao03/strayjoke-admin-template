@@ -222,7 +222,6 @@ import { selectDictDataByType } from '@/api/dict.js'
 import { getCheckedMenuList, getMenuList } from '@/api/menu.js'
 import { getCheckedDeptList } from '@/api/dept.js'
 import { isRenderBtn } from '@/utils/common.js'
-import permissions from '@/permissions.js'
 
 export default {
   components: {
@@ -295,8 +294,8 @@ export default {
   },
   methods: {
     renderBtn() {
-      const btnPerms = permissions.state.btnPermissions
-      const loginId = permissions.info.id
+      const btnPerms = this.$store.state.btnPermissions
+      const loginId = this.$store.state.id
       this.showListBtn = isRenderBtn(btnPerms, 'system:role:search', loginId)
       this.showAddBtn = isRenderBtn(btnPerms, 'system:role:add', loginId)
       this.showBatchDeleteBtn = isRenderBtn(btnPerms, 'system:role:batchDelete', loginId)

@@ -1,16 +1,59 @@
 import ls from '@/utils/localStorage'
-import permissions from '@/permissions'
-import { login, getPermissions, logout, getUserInfo, getWhiteList } from '@/api/auth'
+import { login, logout, getUserInfo } from '@/api/auth'
 
 const state = {
-  token: ls.getItem('token') || ''
+  token: ls.getItem('token') || '',
+  roles:[],
+  name:'',
+  loginName:'',
+  dept:'',
+  phone:'',
+  email:'',
+  sex:'',
+  id:0,
+  createTime:'',
+  avatar:'',
+  posts:[]
 }
 
 const mutations = {
-  SET_TOKEN: (state, token) => {
-    state.token = token
-    ls.setItem('token', token)
-  }
+  SET_TOKEN: (state, value) => {
+    state.token = value
+    ls.setItem('token', value)
+  },
+  SET_ROLES: (state, value) => {
+    state.roles = value
+  },
+  SET_NAME: (state, value) => {
+    state.name = value
+  },
+  SET_lOGIN_NAME: (state, value) => {
+    state.loginName = value
+  },
+  SET_AVATAR: (state, value) => {
+    state.avatar = value
+  },
+  SET_CREATETIME: (state, value) => {
+    state.createTime = value
+  },
+  SET_EMAIL: (state, value) => {
+    state.email = value
+  },
+  SET_SEX: (state, value) => {
+    state.sex = value
+  },
+  SET_PHONE: (state, value) => {
+    state.phone = value
+  },
+  SET_DEPT: (state, value) => {
+    state.dept = value
+  },
+  SET_POSTS: (state, value) => {
+    state.posts = value
+  },
+  SET_ID: (state, value) => {
+    state.id = value
+  },
 }
 
 const actions = {
@@ -24,54 +67,39 @@ const actions = {
       })
     })
   },
+  //获取用户信息
   getUserInfo({ commit }) {
     return new Promise((resolve, reject) => {
       getUserInfo().then((res) => {
         const { roles, posts, name, avatar, email, createTime, deptName, phone, id, sex, loginName } = res.data
         if (roles && roles.length > 0) {
-          permissions.SET_ROLES(roles)
+          commit('SET_ROLES', roles)
         } else {
           reject('网络请求异常，请联系管理员！')
         }
-        permissions.SET_NAME(name)
-        permissions.SET_lOGIN_NAME(loginName)
-        permissions.SET_AVATAR(avatar)
-        permissions.SET_EMAIL(email)
-        permissions.SET_CREATETIME(createTime)
-        permissions.SET_DEPT(deptName)
-        permissions.SET_PHONE(phone)
-        permissions.SET_ID(id)
-        permissions.SET_SEX(sex)
-        permissions.SET_POSTS(posts)
-
+        
+        commit('SET_NAME', name)        
+        commit('SET_lOGIN_NAME', loginName)        
+        commit('SET_AVATAR', avatar)        
+        commit('SET_EMAIL', email)        
+        commit('SET_CREATETIME', createTime)        
+        commit('SET_DEPT', deptName)        
+        commit('SET_PHONE', phone)        
+        commit('SET_ID', id)        
+        commit('SET_SEX', sex)        
+        commit('SET_POSTS', posts)
+        
         resolve(res)
       }).catch(error => {
         reject(error)
       })
     })
   },
-  getPermissions({ commit }) {
-    return new Promise((resolve, reject) => {
-      getPermissions().then(res => {
-        resolve(res.data.web)
-      }).catch(error => {
-        reject(error)
-      })
-    })
-  },
-  getWhiteList({ commit }) {
-    return new Promise((resolve, reject) => {
-      getWhiteList().then(res => {
-        resolve(res.data)
-      }).catch(error => {
-        reject(error)
-      })
-    })
-  },
+
   // 登出
   logout({ commit }) {
     return new Promise((resolve, reject) => {
-      logout().then(res => {
+      logout().then(() => {
         commit('SET_TOKEN', '')
         ls.removeItem('token') // 删除token
         resolve()

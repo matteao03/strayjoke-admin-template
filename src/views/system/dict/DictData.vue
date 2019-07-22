@@ -185,7 +185,6 @@
 import { getDictDataList, editDictData, addDictData, deleteDictData, deleteDictDatas } from '@/api/dict.js'
 import { selectDictDataByType, selectDictType } from '@/api/dict.js'
 import { isRenderBtn } from '@/utils/common.js'
-import permissions from '@/permissions.js'
 
 export default {
   data() {
@@ -238,8 +237,8 @@ export default {
   },
   methods: {
     renderBtn() {
-      const btnPerms = permissions.state.btnPermissions
-      const loginId = permissions.info.id
+      const btnPerms = this.$store.state.btnPermissions
+      const loginId = this.$store.state.id
       this.showListBtn = isRenderBtn(btnPerms, 'system:dict:list', loginId)
       this.showAddBtn = isRenderBtn(btnPerms, 'system:dict:add', loginId)
       this.showDeleteBtn = isRenderBtn(btnPerms, 'system:dict:delete', loginId)

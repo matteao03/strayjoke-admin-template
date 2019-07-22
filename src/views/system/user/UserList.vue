@@ -194,7 +194,6 @@ import { getDeptList } from '@/api/dept.js'
 import { selectDictDataByType } from '@/api/dict.js'
 import { getUserList, deleteUser, resetPassword, changeUserOpen, deleteUsers } from '@/api/user.js'
 import { isRenderBtn } from '@/utils/common.js'
-import permissions from '@/permissions.js'
 
 export default {
   components: {
@@ -246,8 +245,8 @@ export default {
   },
   methods: {
     renderBtn() {
-      const btnPerms = permissions.state.btnPermissions
-      const loginId = permissions.info.id
+      const btnPerms = this.$store.state.btnPermissions
+      const loginId = this.$store.state.id
       this.showListBtn = isRenderBtn(btnPerms, 'system:user:search', loginId)
       this.showAddBtn = isRenderBtn(btnPerms, 'system:user:add', loginId)
       this.showBatchDeleteBtn = isRenderBtn(btnPerms, 'system:user:batchDelete', loginId)

@@ -16,6 +16,7 @@
     "file-saver": "^2.0.2",
     "fuse.js": "^3.4.5",
     "jquery": "^3.4.1",
+    "js-md5": "^0.7.3",
     "mockjs": "^1.0.1-beta3",
     "screenfull": "^4.2.0",
     "vue": "^2.6.6",

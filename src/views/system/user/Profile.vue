@@ -24,17 +24,17 @@
           <el-tab-pane label="基本资料">
             <el-form ref="baseForm" :model="baseForm" label-width="80px">
               <el-form-item label="用户名称">
-                <el-input v-model="baseForm.name"></el-input>
+                <el-input v-model="this.$store.state.name"></el-input>
               </el-form-item>
               <el-form-item label="手机号码">
-                <el-input v-model="baseForm.phone"></el-input>
+                <el-input v-model="this.$store.state.phone"></el-input>
               </el-form-item>
               <el-form-item label="邮箱">
-                <el-input v-model="baseForm.email"></el-input>
+                <el-input v-model="this.$store.state.email"></el-input>
               </el-form-item>
               <el-form-item label="性别">
-                <el-radio v-model="baseForm.sex" label="0">男</el-radio>
-                <el-radio v-model="baseForm.sex" label="1">女</el-radio>
+                <el-radio v-model="this.$store.state.sex" label="0">男</el-radio>
+                <el-radio v-model="this.$store.state.sex" label="1">女</el-radio>
               </el-form-item>
               <el-form-item>
                 <el-button type="primary" @click="saveInfo">保存</el-button>
@@ -77,7 +77,6 @@
 
 <script>
 import ImgCropper from '@/components/ImgCropper'
-import permissions from '@/permissions'
 import { editProfile, editPassword, editAvatar } from '@/api/auth.js'
 
 export default {
@@ -86,7 +85,7 @@ export default {
   },
   data() {
     return {
-      baseForm: { ...permissions.info },
+      baseForm:{},
       safeForm: {
         password: '',
         newPassword: ''
@@ -97,15 +96,15 @@ export default {
   computed: {
     avatar: () => {
       let result = ''
-      if (permissions.info.avatar) {
-        result = `/api/${permissions.info.avatar}`
+      if (this.$store.state.avatar) {
+        result = `/api/${this.$store.state.avatar}`
       } else {
         result = require('@/assets/images/profile.png')
       }
       return result
     },
     posts: () => {
-      return permissions.state.posts.join('/')
+      return this.$store.state.posts.join('/')
     }
   },
   methods: {

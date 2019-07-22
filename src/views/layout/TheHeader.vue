@@ -17,7 +17,7 @@
         <div class="el-dropdown-link admin-avatar">
           <img :src="avatar">
           <span class="admin-name">
-            {{ permissions.info.name }}
+            {{ this.$store.state.auth.name }}
             <i class="el-icon-caret-bottom el-icon--right"></i>
           </span>
         </div>
@@ -36,7 +36,7 @@
     >
       <el-form ref="passwordForm" :model="passwordForm" label-width="80px">
         <el-form-item label="登录名称">
-          <el-input v-model="permissions.info.loginName" disabled></el-input>
+          <el-input v-model="passwordForm.loginName" disabled></el-input>
         </el-form-item>
         <el-form-item label="旧密码">
           <el-input v-model="passwordForm.password"></el-input>
@@ -60,7 +60,6 @@
 import BreadCrumb from '@/components/BreadCrumb'
 import ScreenFull from '@/components/ScreenFull'
 import SearchMenu from '@/components/SearchMenu'
-import permissions from '@/permissions'
 import { editPassword } from '@/api/auth.js'
 
 export default {
@@ -73,15 +72,19 @@ export default {
     return {
       isCollapse: this.$store.state.common.isCollapseNav,
       showPasswordForm: false,
-      passwordForm: {},
-      permissions
+      passwordForm: {
+        loginName:this.$store.state.auth.loginName,
+        password:this.$store.state.auth.password,
+        newPassword:'',
+        confirmed:'',
+      },
     }
   },
   computed: {
-    avatar: () => {
+    avatar: function() {
       let result = ''
-      if (permissions.info.avatar) {
-        result = `/api/${permissions.info.avatar}`
+      if (this.$store.state.auth.avatar) {
+        result = `/api/${this.$store.state.auth.avatar}`
       } else {
         result = require('@/assets/images/admin-avatar.gif')
       }
@@ -120,7 +123,7 @@ export default {
           this.$confirm('确认提交吗？', '提示', {}).then(() => {
             this.$store.state.common.isLoading = 1
             const para = Object.assign({}, this.passwordForm)
-            editPassword(para).then((res) => {
+            editPassword(para).then(() => {
               this.$store.state.common.isLoading = 0
               this.showPasswordForm = false
               this.$message({

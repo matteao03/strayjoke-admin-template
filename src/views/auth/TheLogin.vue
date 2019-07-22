@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import md5 from 'js-md5'
 export default {
   data() {
     return {
@@ -37,24 +38,18 @@ export default {
       isLoading: false
     }
   },
-  watch: {
-    $route(to, from) { // 监听参数变化
-      location.reload()
-    }
-  },
-  mounted() {
-    if (this.$route.query.from === 'logout') {
-      this.$router.push({ path: '/login', replace: true })
-    }
-  },
+  mounted() {},
   methods: {
     onSubmit(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.isLoading = true
-          this.$store.dispatch('login', this.form).then(() => {
+          //密码加密
+          let para =  {admin:this.form.admin, password:md5(this.form.password)} 
+          
+          this.$store.dispatch('login', para).then(() => {
             this.isLoading = false
-            this.$router.push(this.$route.query.r || '/')
+            this.$router.push('/')
           }).catch(() => {
             this.isLoading = false
           })
