@@ -1,8 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import { staticRoutes} from './routes'
-import routeUtils from '@/utils/routeUtils'
-import { hasPermission } from '@/utils/common'
 
 Vue.use(Router)
 const router = new Router({
@@ -21,18 +19,9 @@ router.beforeEach((to, from, next) => {
     if (to.path === '/login') {
       next(from.path)
     } else {
-      if (auth.roles.length === 0) { // 判断是否拉取完用户角色信息
-        store.dispatch('getUserInfo').then(() => {
-          store.dispatch('getPermissions').then(res => {
-            staticRoutes.forEach((item) => {
-              if (item.path === '/') {
-                routeUtils(item.children, res.menuPermissions)
-              }
-            })
-            store.commit('SET_ROUTES', staticRoutes) //存储菜单权限
-            router.addRoutes(staticRoutes) // 动态添加可访问路由表
-            next({ ...to, replace: true })
-          })
+      if (auth.id === 0) { // 判断是否拉取完用户信息
+        store.dispatch('getManagerInfo').then(() => {
+          next()
         })
       } else {
         next()

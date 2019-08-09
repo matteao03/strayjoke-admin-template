@@ -5,9 +5,9 @@ import router from './router'
 import store from './store/index'
 import '@/icons'
 import '@/assets/css/common.scss'
-import Mock from '@/mock'
+// import Mock from '@/mock'
 
-Mock.mockData()
+// Mock.mockData()
 
 Vue.config.productionTip = false
 // Vue.config.silent = true // 取消 Vue 所有的日志与警告

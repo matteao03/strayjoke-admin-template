@@ -17,29 +17,36 @@ export const staticRoutes = [
         component: Dashboard
       },
       {
-        path: '401',
-        name: '401',
-        component: () => import('@/views/error/401'),
-        hidden: true
+        path: 'user',
+        name: '用户管理',
+        component: () => import('@/views/user/Index'),
       },
       {
-        path: 'system/user/profile',
-        name: '个人主页',
-        component: () => import('@/views/system/user/Profile'),
-        hidden: true
+        path: 'lawyer',
+        name: '律师管理',
+        component: () => import('@/views/lawyer/Index.vue'),
+      },
+      {
+        path: 'product',
+        name: '服务管理',
+        component: () => import('@/views/product/Index.vue'),
+      },
+      {
+        path: 'order',
+        name: '订单管理',
+        component: () => import('@/views/order/Index.vue'),
+      },
+      {
+        path: 'pay',
+        name: '提现管理',
+        component: () => import('@/views/pay/Index.vue'),
       }
     ]
   },
   {
     path: '/login',
     name: 'login',
-    component: () => import('@/views/auth/TheLogin'),
+    component: () => import('@/views/auth/TheLogin.vue'),
     hidden: true
   }
-]
-
-export const whiteListRoutes = [
-  '/dashboard',
-  '/401',
-  '/system/user/profile'
 ]

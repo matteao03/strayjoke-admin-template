@@ -31,16 +31,16 @@ export default {
     ...mapState({
       asideWidth: state => (state.common.isCollapseNav === 1 ? '60px' : '200px'),
       isCollapse: state => state.common.isCollapseNav === 1,
-      sideBar: state => {
-        let sideBar = []
-        state.permissions.routes.forEach(item => {
-          if (item.path === '/') {
-            sideBar = item.children
-          }
-        })
-        return sideBar
-      }
     }),
+    sideBar: function() {
+      let sideBar = []
+      this.$router.options.routes.forEach(item => {
+        if (item.path === '/') {
+          sideBar = item.children
+        }
+      })
+      return sideBar
+    }
   }
 }
 </script>

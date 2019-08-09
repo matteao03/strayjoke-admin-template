@@ -1,19 +1,16 @@
 import ls from '@/utils/localStorage'
-import { login, logout, getUserInfo } from '@/api/auth'
+import { login, logout, getManagerInfo } from '@/api/auth'
 
 const state = {
   token: ls.getItem('token') || '',
-  roles:[],
-  name:'',
+  nickName:'',
   loginName:'',
-  dept:'',
   phone:'',
   email:'',
   sex:'',
   id:0,
   createTime:'',
-  avatar:'',
-  posts:[]
+  avatar:''
 }
 
 const mutations = {
@@ -21,11 +18,8 @@ const mutations = {
     state.token = value
     ls.setItem('token', value)
   },
-  SET_ROLES: (state, value) => {
-    state.roles = value
-  },
-  SET_NAME: (state, value) => {
-    state.name = value
+  SET_NICK_NAME: (state, value) => {
+    state.nickName = value
   },
   SET_lOGIN_NAME: (state, value) => {
     state.loginName = value
@@ -45,12 +39,6 @@ const mutations = {
   SET_PHONE: (state, value) => {
     state.phone = value
   },
-  SET_DEPT: (state, value) => {
-    state.dept = value
-  },
-  SET_POSTS: (state, value) => {
-    state.posts = value
-  },
   SET_ID: (state, value) => {
     state.id = value
   },
@@ -60,34 +48,31 @@ const actions = {
   login({ commit }, form) {
     return new Promise((resolve, reject) => {
       login(form).then(res => {
-        commit('SET_TOKEN', res.data.token)
-        resolve()
+           commit('SET_TOKEN', res.data.access_token)
+           resolve()
       }).catch(error => {
         reject(error)
       })
     })
   },
   //获取用户信息
-  getUserInfo({ commit }) {
+  getManagerInfo({ commit }) {
     return new Promise((resolve, reject) => {
-      getUserInfo().then((res) => {
-        const { roles, posts, name, avatar, email, createTime, deptName, phone, id, sex, loginName } = res.data
-        if (roles && roles.length > 0) {
-          commit('SET_ROLES', roles)
+      getManagerInfo().then((res) => {
+        const { nick_name, avatar, email, created_at, phone, id, sex, login_name } = res.data
+        if (id) {
+          commit('SET_ID', id)
         } else {
           reject('网络请求异常，请联系管理员！')
         }
         
-        commit('SET_NAME', name)        
-        commit('SET_lOGIN_NAME', loginName)        
+        commit('SET_NICK_NAME', nick_name)        
+        commit('SET_lOGIN_NAME', login_name)        
         commit('SET_AVATAR', avatar)        
         commit('SET_EMAIL', email)        
-        commit('SET_CREATETIME', createTime)        
-        commit('SET_DEPT', deptName)        
+        commit('SET_CREATETIME', created_at)        
         commit('SET_PHONE', phone)        
-        commit('SET_ID', id)        
         commit('SET_SEX', sex)        
-        commit('SET_POSTS', posts)
         
         resolve(res)
       }).catch(error => {

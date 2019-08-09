@@ -45,7 +45,7 @@ export default {
         if (valid) {
           this.isLoading = true
           //密码加密
-          let para =  {admin:this.form.admin, password:md5(this.form.password)} 
+          let para =  {name:this.form.name, password:md5(this.form.password)} 
           
           this.$store.dispatch('login', para).then(() => {
             this.isLoading = false

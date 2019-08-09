@@ -10,14 +10,14 @@
         <i class="el-icon-message"></i>
       </el-badge>
 
-      <search-menu class="right-menu-item" />
+      <!-- <search-menu class="right-menu-item" /> -->
       <screen-full class="right-menu-item" />
 
       <el-dropdown class="right-menu-item" trigger="click" @command="handleCommand">
         <div class="el-dropdown-link admin-avatar">
           <img :src="avatar">
           <span class="admin-name">
-            {{ this.$store.state.auth.name }}
+            {{ this.$store.state.auth.nickName }}
             <i class="el-icon-caret-bottom el-icon--right"></i>
           </span>
         </div>
